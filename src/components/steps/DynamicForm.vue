@@ -1,7 +1,7 @@
 <template>
     <div>
         <a-form :form="form" @submit="submit" layout="vertical">
-            <template v-for="(item, key) in formData">
+            <template v-for="(item, key) in data">
                 <div :key="key">
                     <div v-if="item.type === 'header' && item.subtype !== 'h1'">
                         <h3>{{ ct(item.label) }}</h3>
@@ -39,6 +39,7 @@ import {
 import StepMixin from '../../mixins/StepMixin';
 
 export default {
+    name: 'dynamic-form',
     props: ['data'],
     mixins: [StepMixin],
     components: {
@@ -50,11 +51,6 @@ export default {
         aSelectOption: Select.Option,
         aCheckbox: Checkbox,
         aCheckboxGroup: Checkbox.Group,
-    },
-    computed: {
-        formData() {
-            return this.data.form;
-        },
     },
     methods: {
         ct(title) {

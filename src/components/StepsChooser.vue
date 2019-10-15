@@ -2,7 +2,7 @@
     <div>
         <div class="steps-chooser p-3 d-flex flex-column justify-content-between" :class="{ visible }">
             <div class="step pt-1 pb-1 d-flex align-items-center" v-for="(s, key) in steps" :key="key">
-                <a-button block @click="moveTo(key)" :type="step === key ? 'primary' : 'default'">{{ titleParser(s) }}</a-button>
+                <a-button block @click="moveTo(key)" :type="step === key ? 'primary' : 'default'">{{ s.title }}</a-button>
             </div>
         </div>
     </div>
@@ -15,7 +15,7 @@ export default {
     components: {
         aButton: Button,
     },
-    props: ['visible', 'steps', 'titleParser'],
+    props: ['visible', 'steps'],
     computed: {
         step() {
             return this.$store.state.step;

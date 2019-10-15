@@ -2,13 +2,25 @@ import Axios from 'axios';
 
 class Api {
     constructor() {
-        this.instance = Axios.create({
-            baseURL: 'http://localhost/netbs_old/web/app_dev.php',
+        this.secureInstance = Axios.create({
+            baseURL: `${process.env.VUE_APP_NETBS_BASE_URL}app_dev.php/api/v1/netBS/`,
         });
     }
 
-    getModels() {
-        return this.instance.get('/api/v1/public/netBS/tente/feuille-etat/tente-model-form');
+    get(route, token) {
+        return this.secureInstance.get(route, {
+            headers: { 'X-Authorization': `Bearer ${token}` },
+        });
+    }
+
+    post(route, token, params) {
+        return this.secureInstance.post(route, params, {
+            headers: { 'X-Authorization': `Bearer ${token}` },
+        });
+    }
+
+    login(username, password) {
+        return this.secureInstance.post('gettoken', { username, password });
     }
 }
 

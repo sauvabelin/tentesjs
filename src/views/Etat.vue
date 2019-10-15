@@ -1,79 +1,100 @@
 <template>
     <div>
         <div>
-            <steps-chooser :steps="steps" :titleParser="stepTitle" :visible="stepChooserVisible" @close="stepChooserVisible = false" />
-            <div class="etat-content" :class="{ pushed: stepChooserVisible }">
-                <step-holder :steps="steps" />
-                <nav-buttons :steps="steps" :titleParser="stepTitle" />
+            <div class="etat-content">
+                <h2 class="main-title text-center pt-2 mb-0">{{ steps[step].title }}</h2>
+                <keep-alive>
+                    <div class="container pt-3 pb-1">
+                        <keep-alive>
+                            <component :key="step" :is="stepItem.component" :data="stepItem.data" ref="stepComponent" />
+                        </keep-alive>
+                    </div>
+                </keep-alive>
+                <nav-buttons :steps="steps" @next="nextStep" @finish="finish" />
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import StepHolder from '../components/steps/Holder.vue';
+import { Modal } from 'ant-design-vue';
 import NavButtons from '../components/steps/NavButtons.vue';
-import StepsChooser from '../components/StepsChooser.vue';
 import Identite from '../components/steps/Identite.vue';
 import DynamicForm from '../components/steps/DynamicForm.vue';
+import Drawing from '../components/steps/Drawing.vue';
 
 export default {
     components: {
-        StepsChooser,
-        StepHolder,
         NavButtons,
     },
     data() {
         return {
-            stepChooserVisible: true,
-            steps: [{ component: Identite, title: 'Identité', type: 'component' }],
+            steps: [{ component: Identite, title: 'Identité', data: [] }],
         };
     },
-    mounted() {
-        this.$store.dispatch('loadModels');
+    async mounted() {
+        await this.$store.dispatch('loadModels');
     },
     watch: {
-        '$store.state.model': function() {
+        model() {
             let index = 0;
-            this.$store.getters.model.form.forEach((item, key) => {
+            this.steps.splice(1);
+            this.model.formData.forEach((item, key) => {
                 if ((item.type === 'header' && item.subtype === 'h1')
                     || (key === 0 && (item.type !== 'header' || item.subtype !== 'h1'))) {
-                    this.steps.push({ type: 'form', form: [] });
+                    this.steps.push({ component: DynamicForm, title: item.label, data: [] });
                     index += 1;
                 }
-                this.steps[index].form.push(item);
+                this.steps[index].data.push(item);
             });
-
+            this.model.drawingParts.forEach(({ image, name }) => {
+                this.steps.push({ component: Drawing, title: name, data: { image, name } });
+            });
+        },
+    },
+    methods: {
+        nextStep() {
+            const validated = this.$refs.stepComponent.submit();
+            console.log(validated);
+            if (validated) {
+                this.$store.commit('step', this.step + 1);
+            }
+        },
+        async finish() {
+            const validated = this.$refs.stepComponent.submit();
+            if (validated) {
+                const sent = await this.$store.dispatch('sendFormData');
+                if (sent) {
+                    Modal.success({
+                        title: 'Feuille d\'état envoyée',
+                        content: 'La feuille a été validée et envoyée correctement.',
+                        okText: 'Lourd!',
+                        onOk: () => {
+                            this.$router.push('/etat');
+                        },
+                    });
+                }
+            }
         },
     },
     computed: {
-        stepComponent() {
-            const stepData = this.steps[this.step];
-            if (stepData.type === 'form') return DynamicForm;
-            return stepData.component;
+        model() {
+            return this.$store.getters.model;
         },
         step() {
             return this.$store.state.step;
         },
-    },
-    methods: {
-        stepTitle(step) {
-            if (step.type === 'form') return step.form[0].label.replace('<br>', '');
-            if (step.type === 'component') return step.title;
-            return '';
+        stepItem() {
+            return this.steps[this.step];
         },
     },
 };
 </script>
 
 <style scoped lang="scss">
-    .etat-content {
-        transform: translateY(0);
-        transition: transform .3s;
+    .main-title {
 
-
-        &.pushed {
-            transform: translateY(200px);
-        }
+        width: 100%;
+        overflow: hidden;
     }
 </style>

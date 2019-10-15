@@ -23,7 +23,7 @@
                             <a-select-option value="12">Armina</a-select-option>
                         </a-select>
                     </a-form-item>
-                    <a-form-item label="Activité">
+                    <a-form-item label="Nom de l'activité">
                         <a-input v-decorator="['activite', { rules: [{ required: true }]}]" />
                     </a-form-item>
                     <div class="row no-gutters">

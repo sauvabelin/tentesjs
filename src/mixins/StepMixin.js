@@ -6,12 +6,14 @@ export default {
     },
     methods: {
         submit() {
+            let next = false;
             this.form.validateFields((err, values) => {
-                console.log(err);
                 if (!err) {
-                    console.log(values);
+                    this.$store.commit('setFormValues', values);
+                    next = true;
                 }
             });
+            return next;
         },
     },
 };
