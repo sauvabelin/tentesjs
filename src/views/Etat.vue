@@ -2,7 +2,7 @@
     <div>
         <div>
             <div class="etat-content">
-                <h2 class="main-title text-center pt-2 mb-0">{{ steps[step].title }}</h2>
+                <h2 class="main-title text-center pt-2 mb-0">{{ formatTitle(steps[step].title) }}</h2>
                 <keep-alive>
                     <div class="container pt-3 pb-1">
                         <keep-alive>
@@ -10,7 +10,7 @@
                         </keep-alive>
                     </div>
                 </keep-alive>
-                <nav-buttons :steps="steps" @next="nextStep" @finish="finish" />
+                <nav-buttons :steps="steps" @next="nextStep" :formatTitle="formatTitle" @finish="finish" />
             </div>
         </div>
     </div>
@@ -33,7 +33,10 @@ export default {
         };
     },
     async mounted() {
-        await this.$store.dispatch('loadModels');
+        await Promise.all([
+            this.$store.dispatch('loadModels'),
+            this.$store.dispatch('loadGroupes'),
+        ]);
     },
     watch: {
         model() {
@@ -53,9 +56,11 @@ export default {
         },
     },
     methods: {
+        formatTitle(str) {
+            return str.replace('<br>', '');
+        },
         nextStep() {
             const validated = this.$refs.stepComponent.submit();
-            console.log(validated);
             if (validated) {
                 this.$store.commit('step', this.step + 1);
             }
@@ -68,9 +73,9 @@ export default {
                     Modal.success({
                         title: 'Feuille d\'état envoyée',
                         content: 'La feuille a été validée et envoyée correctement.',
-                        okText: 'Lourd!',
+                        okText: 'Lourd! Déconnecte moi',
                         onOk: () => {
-                            this.$router.push('/etat');
+                            this.$router.push('/');
                         },
                     });
                 }

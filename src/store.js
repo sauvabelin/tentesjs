@@ -10,6 +10,7 @@ const store = new Vuex.Store({
     state: {
         step: 0,
         models: [],
+        groupes: [],
         model: null,
         loading: false,
         formValues: [],
@@ -45,6 +46,10 @@ const store = new Vuex.Store({
             state.models.splice(0);
             models.forEach(m => state.models.push(m));
         },
+        groupes(state, groupes) {
+            state.groupes.splice(0);
+            groupes.forEach(m => state.groupes.push(m));
+        },
         token(state, token) {
             state.token = token;
         },
@@ -78,6 +83,10 @@ const store = new Vuex.Store({
         async loadModels({ commit, dispatch }) {
             const { data } = await dispatch('run', { route: 'tente/feuille-etat/tente-model-form' });
             commit('models', data);
+        },
+        async loadGroupes({ commit, dispatch }) {
+            const { data } = await dispatch('run', { route: 'tente/feuille-etat/groupes' });
+            commit('groupes', data);
         },
         async sendFormData({ state, dispatch }) {
             try {

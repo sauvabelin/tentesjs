@@ -18,9 +18,8 @@
                         </a-select>
                     </a-form-item>
                     <a-form-item label="Unité">
-                        <a-select v-decorator="['unite', { rules: [{ required: true }]}]">
-                            <a-select-option value="1">Zanfleuron</a-select-option>
-                            <a-select-option value="12">Armina</a-select-option>
+                        <a-select v-decorator="['unite', { rules: [{ required: true }]}]" showSearch :filterOption="searchGroupe">
+                            <a-select-option v-for="item in $store.state.groupes" :key="item.id" :value="item.id">{{ item.nom }}</a-select-option>
                         </a-select>
                     </a-form-item>
                     <a-form-item label="Nom de l'activité">
@@ -62,5 +61,10 @@ export default {
         aSelectOption: Select.Option,
     },
     mixins: [StepMixin],
+    methods: {
+        searchGroupe(input, option) {
+            return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        },
+    },
 };
 </script>

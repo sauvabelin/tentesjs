@@ -7,19 +7,19 @@ class Api {
         });
     }
 
-    get(route, token) {
+    async get(route, token) {
         return this.secureInstance.get(route, {
             headers: { 'X-Authorization': `Bearer ${token}` },
         });
     }
 
-    post(route, token, params) {
+    async post(route, token, params) {
         return this.secureInstance.post(route, params, {
             headers: { 'X-Authorization': `Bearer ${token}` },
         });
     }
 
-    login(username, password) {
+    async login(username, password) {
         return this.secureInstance.post('gettoken', { username, password });
     }
 }

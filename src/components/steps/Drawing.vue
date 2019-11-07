@@ -35,6 +35,8 @@ export default {
         return {
             drawing: null,
             remarques: null,
+            width: 0,
+            height: 0,
         };
     },
     mounted() {
@@ -56,15 +58,23 @@ export default {
                 height: newHeight,
             });
 
+            this.width = containerWidth;
+            this.height = newHeight;
+
             this.drawing.freeDrawingBrush.color = 'red';
         };
         image.src = `${process.env.VUE_APP_NETBS_BASE_URL}tentes/uploads/${this.data.image}`;
     },
     methods: {
         submit() {
+            console.log(this.drawing.getObjects());
             this.$store.commit('setFormValues', {
                 remarques: this.remarques,
-                drawing: this.drawing.getObjects(),
+                drawing: {
+                    width: this.width,
+                    height: this.height,
+                    data: this.drawing.getObjects(),
+                },
             });
             return true;
         },

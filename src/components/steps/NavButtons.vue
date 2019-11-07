@@ -4,12 +4,12 @@
             <div>
                 <a-button v-if="step > 0" @click="$store.commit('step', step - 1)">
                     <a-icon type="left" />
-                    {{ steps[step - 1].title }}
+                    {{ formatTitle(steps[step - 1].title) }}
                 </a-button>
             </div>
             <div>
                 <a-button type="primary" v-if="step < steps.length - 1" @click="$emit('next')">
-                    {{ steps[step + 1].title }}
+                    {{ formatTitle(steps[step + 1].title) }}
                     <a-icon type="right" />
                 </a-button>
                 <a-button v-else @click="$emit('finish')" type="primary">
@@ -29,7 +29,7 @@ export default {
         aButton: Button,
         aIcon: Icon,
     },
-    props: ['steps'],
+    props: ['steps', 'formatTitle'],
     computed: {
         step() {
             return this.$store.state.step;
