@@ -57,7 +57,9 @@ export default {
     },
     methods: {
         formatTitle(str) {
-            return str.replace('<br>', '');
+            const data = str.replace('<br>', '').split('.');
+            if (data.length > 1) data.pop();
+            return data.join('.');
         },
         nextStep() {
             const validated = this.$refs.stepComponent.submit();

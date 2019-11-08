@@ -36,6 +36,13 @@ const store = new Vuex.Store({
 
             state.formValues[step] = data;
         },
+        clear(state) {
+            state.step = 0;
+            state.models.splice(0);
+            state.groupes.splice(0);
+            state.model = null;
+            state.formValues.splice(0);
+        },
         loading(state, v) {
             state.loading = v;
         },
@@ -64,6 +71,7 @@ const store = new Vuex.Store({
                     commit('token', null);
                     Router.push('/');
                 }
+                return { data: [] };
             };
 
             if (method === 'POST') {
@@ -80,13 +88,18 @@ const store = new Vuex.Store({
                 return false;
             }
         },
+        async logout({ commit }) {
+            commit('clear');
+            commit('token', null);
+            Router.push('/');
+        },
         async loadModels({ commit, dispatch }) {
-            const { data } = await dispatch('run', { route: 'tente/feuille-etat/tente-model-form' });
-            commit('models', data);
+            const data = await dispatch('run', { route: 'tente/feuille-etat/tente-model-form' });
+            if (data.data) commit('models', data.data);
         },
         async loadGroupes({ commit, dispatch }) {
-            const { data } = await dispatch('run', { route: 'tente/feuille-etat/groupes' });
-            commit('groupes', data);
+            const data = await dispatch('run', { route: 'tente/feuille-etat/groupes' });
+            if (data.data) commit('groupes', data.data);
         },
         async sendFormData({ state, dispatch }) {
             try {

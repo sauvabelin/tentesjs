@@ -1,0 +1,7 @@
+{
+  "name": "tenteJS",
+  "version": 2,
+  "env": {
+    "VUE_APP_NETBS_BASE_URL": "https://netbs.sauvabelin.ch/"
+  }
+}

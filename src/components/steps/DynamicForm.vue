@@ -8,8 +8,8 @@
                     </div>
                     <div v-else class="mb-2">
                         <a-form-item v-if="item.type !== 'header'" :label="ct(item.label)">
-                            <a-textarea v-if="item.type === 'textarea'" v-decorator="decorator(item)" />
-                            <a-select v-else-if="item.type === 'select'" v-decorator="decorator(item)">
+                            <a-textarea v-if="item.type === 'textarea'" v-decorator="decorator(item)" :placeholder="item.placeholder" />
+                            <a-select v-else-if="item.type === 'select'" v-decorator="decorator(item)" :placeholder="item.placeholder">
                                 <a-select-option v-for="option in item.values" :key="option.value" :value="option.value">
                                     {{ option.label }}
                                 </a-select-option>
@@ -17,9 +17,9 @@
                             <a-checkbox-group v-else-if="item.type === 'checkbox-group'" v-decorator="decorator(item)">
                                 <a-checkbox v-for="option in item.values" :key="option.value" :value="option.value">{{ option.label }}</a-checkbox>
                             </a-checkbox-group>
-                            <a-input v-else-if="item.type === 'number'" v-decorator="decorator(item)" type="number" />
-                            <a-input v-else-if="item.type === 'date'" v-decorator="decorator(item)" type="date" />
-                            <a-input v-else-if="item.type === 'text'" v-decorator="decorator(item)" />
+                            <a-input v-else-if="item.type === 'number'" v-decorator="decorator(item)" :placeholder="item.placeholder" type="number" />
+                            <a-input v-else-if="item.type === 'date'" v-decorator="decorator(item)" :placeholder="item.placeholder" type="date" />
+                            <a-input v-else-if="item.type === 'text'" v-decorator="decorator(item)" :placeholder="item.placeholder" />
                         </a-form-item>
                     </div>
                 </div>
@@ -51,6 +51,15 @@ export default {
         aSelectOption: Select.Option,
         aCheckbox: Checkbox,
         aCheckboxGroup: Checkbox.Group,
+    },
+    mounted() {
+        const values = this.data.filter(it => ['number', 'date', 'text', 'textarea'].includes(it.type))
+            .reduce((holder, item) => {
+                // eslint-disable-next-line
+                if (item.value) holder[item.name] = item.value;
+                return holder;
+            }, {});
+        this.form.setFieldsValue(values);
     },
     methods: {
         ct(title) {
